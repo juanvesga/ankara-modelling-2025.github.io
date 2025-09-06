@@ -314,7 +314,8 @@
             <ul>
                 <li><a href="#" onclick="showSection('home')">Home</a></li>
                 <li><a href="#" onclick="showSection('syllabus')">Agenda</a></li>
-                <li><a href="#" onclick="showSection('modules')">Modules</a></li>
+                <li><a href="#" onclick="showSection('modules')">Lectures</a></li>
+                <li><a href="#" onclick="showSection('practicals')">Practicals</a></li>
                 <li><a href="#" onclick="showSection('assignments')">Assignments</a></li>
                 <li><a href="#" onclick="showSection('resources')">Resources</a></li>
                 <li><a href="#" onclick="showSection('contact')">Contact</a></li>
@@ -596,7 +597,6 @@
                         <p>Click the badge below to access all practical sessions in an interactive Jupyter environment powered by Binder. The environment includes R and all required packages pre-installed.</p>
                         
                         <div style="text-align: center; margin: 2rem 0;">
-                            <!-- Binder badge placeholder - replace with your actual repository -->
                             <a href="https://mybinder.org/v2/gh/YOUR-USERNAME/YOUR-REPO-NAME/HEAD" target="_blank">
                                 <img src="https://mybinder.org/badge_logo.svg" alt="Launch Binder" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                             </a>
@@ -618,67 +618,90 @@
                 </section>
 
                 <section id="assignments" class="section">
-                    <h2>Assignments</h2>
+                    <h2>Final Assignment</h2>
+                    <p>The final assignment is designed to compile and apply all the skills you have gathered throughout the course.</p>
                     
                     <div class="module">
-                        <h3>Assignment 1: Research Paper</h3>
-                        <p><strong>Due:</strong> February 15, 2024</p>
-                        <p>Write a 5-page research paper on the assigned topic. Include at least 5 academic sources.</p>
-                        <div>
-                            <a href="#" class="resource-link">📋 Assignment Details</a>
-                            <a href="#" class="resource-link">📤 Submit Here</a>
+                        <h3>📊 Capstone Project: Infectious Disease Modeling</h3>
+                        <p>This comprehensive assignment will allow you to demonstrate your understanding of infectious disease modeling concepts, from basic compartmental models to advanced stochastic approaches and real-world data analysis.</p>
+                        
+                        <div class="announcement">
+                            <h4>📝 Assignment Details:</h4>
+                            <ul>
+                                <li><strong>Format:</strong> Group activity (3-4 participants per group)</li>
+                                <li><strong>Duration:</strong> Day 4 (introduction) to Day 5 (work & presentation)</li>
+                                <li><strong>Day 5 Activities:</strong> Hands-on work time followed by group presentations</li>
+                                <li><strong>Tools:</strong> Interactive Jupyter Notebook environment</li>
+                            </ul>
                         </div>
-                    </div>
-
-                    <div class="module">
-                        <h3>Assignment 2: Group Project</h3>
-                        <p><strong>Due:</strong> March 20, 2024</p>
-                        <p>Collaborative project to be completed in groups of 3-4 students.</p>
-                        <div>
-                            <a href="#" class="resource-link">📋 Project Guidelines</a>
-                            <a href="#" class="resource-link">👥 Group Formation</a>
+                        
+                        <div class="schedule-item">
+                            <strong>📅 Timeline:</strong><br>
+                            <strong>Day 4:</strong> Assignment introduction and group formation<br>
+                            <strong>Day 5:</strong> Group presentations and course wrap-up
                         </div>
+                        
+                        <div style="margin-top: 1.5rem;">
+                            <h4>🔗 Assignment Materials:</h4>
+                            <p>A dedicated Jupyter notebook with the complete assignment instructions and datasets will be uploaded on <strong>Day 4</strong> of the course.</p>
+                            
+                            <div style="text-align: center; margin: 1rem 0;">
+                                <a href="#" class="resource-link" style="opacity: 0.6; cursor: not-allowed;">
+                                    📓 Final Assignment Notebook (Available Day 4)
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <p><strong>Note:</strong> This assignment integrates all course components - compartmental modeling, SIR dynamics, stochastic processes, and outbreak data analysis. Groups will present their findings and modeling approaches to the class on the final day.</p>
                     </div>
                 </section>
 
                 <section id="resources" class="section">
                     <h2>Course Resources</h2>
+                    <p>Essential reading materials, online resources, and tools to support your learning in infectious disease modeling.</p>
                     
-                    <h3>Required Textbooks</h3>
+                    <h3>Scientific Literature</h3>
                     <ul>
-                        <li>"Course Textbook Title" by Author Name (2023)</li>
-                        <li>"Supplementary Reading" by Another Author (2022)</li>
+                        <li><a href="https://www.nature.com/articles/nrmicro1845" target="_blank" class="resource-link">📄 Grassly NC et al. review on ID mathematical models</a></li>
+                        <li><a href="https://pubmed.ncbi.nlm.nih.gov/21481448/" target="_blank" class="resource-link">📄 Garnett et al. Mathematical models in the evaluation of health programmes</a></li>
+                        <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7150075/" target="_blank" class="resource-link">📄 White et al. Mathematical Models in Infectious Disease Epidemiology</a></li>
+                        <li><a href="https://www.nature.com/articles/s41592-020-0856-2" target="_blank" class="resource-link">📄 Bjornstad et al. SEIRS for ID modelling</a></li>
+                        <li><a href="https://academic.oup.com/cid/article/73/1/e215/5932264" target="_blank" class="resource-link">📄 O'Driscoll et al 2021.CID. R estimation methods</a></li>
+                        <li><a href="https://www.pnas.org/doi/10.1073/pnas.0307506101" target="_blank" class="resource-link">📄 Fraser et al 2004. PNAS. Outbreak control</a></li>
                     </ul>
 
                     <h3>Online Resources</h3>
                     <ul>
-                        <li><a href="#" class="resource-link">📚 Digital Library</a></li>
-                        <li><a href="#" class="resource-link">🎥 Video Tutorials</a></li>
-                        <li><a href="#" class="resource-link">📊 Data Sets</a></li>
-                        <li><a href="#" class="resource-link">🔗 External Links</a></li>
+                        <li><a href="http://epirecip.es/epicookbook/" target="_blank" class="resource-link">🍳 Epirecipes: ID modelling examples in different programming languages</a></li>
+                        <li><a href="http://www.modelinginfectiousdiseases.org/" target="_blank" class="resource-link">📚 Keeling & Rohani Modelling ID book</a></li>
+                    </ul>
+
+                    <h3>Online Books</h3>
+                    <ul>
+                        <li><a href="https://bookdown.org/aschmi11/RESMHandbook/" target="_blank" class="resource-link">📖 R software Handbook</a></li>
+                        <li><a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf" target="_blank" class="resource-link">📖 An introduction to R</a></li>
                     </ul>
 
                     <h3>Software & Tools</h3>
-                    <p>List of required software, online tools, or platforms students need to access.</p>
+                    <p>All practical sessions will use Jupyter Notebooks with R kernels, accessible through Binder. No software installation required - everything runs in your browser!</p>
                 </section>
 
                 <section id="contact" class="section">
                     <h2>Contact Information</h2>
                     
                     <h3>Instructor</h3>
-                    <p><strong>Name:</strong> Juan Vesga (UKHSA/ICL)<br>
-                    <strong>Institution:</strong> UKHSA/ICL<br>
-                    <strong>Email:</strong> [Your email will be provided]<br>
-                    <strong>Course Dates:</strong> September 15-19, 2025<br>
-                    <strong>Location:</strong> Ankara, Turkey</p>
-
-                    <h3>Teaching Assistant</h3>
-                    <p><strong>Name:</strong> TA Name<br>
-                    <strong>Email:</strong> ta.email@institution.edu<br>
-                    <strong>Office Hours:</strong> Wednesdays, 1:00-3:00 PM</p>
+                    <p><strong>Name:</strong> Juan Vesga<br>
+                    <strong>Institution:</strong> Lead Vaccine Modeller at UK Health Security Agency and visiting researcher at Imperial College London<br>
+                    <strong>Email:</strong> juan.vesga@ukhsa.gov.uk; j.vesga10@ic.ac.uk<br>
+                    <strong>Profile:</strong> <a href="https://profiles.imperial.ac.uk/j.vesga10" target="_blank" class="resource-link">Imperial College London Profile</a></p>
 
                     <h3>Course Communication</h3>
-                    <p>Primary communication will be through email and course announcements. Please allow 24-48 hours for email responses.</p>
+                    <p>Primary communication will be through email and course announcements.</p>
+
+                    <h3>Course Details</h3>
+                    <p><strong>Dates:</strong> September 15-19, 2025<br>
+                    <strong>Location:</strong> Ministry of Health (GDPH-MoH), Ankara, Turkiye<br>
+                    <strong>Duration:</strong> 5-day intensive workshop</p>
                 </section>
             </main>
 
