@@ -1,6 +1,8 @@
-# ankara-modelling-2025.github.io
+# Github pages hosting the short course on ID modelling for Turkiye's WHO/MoH , September 2025  
 
 ## Repository Structure
+
+```
 /
 ├── index.html (English version)
 ├── index-tr.html (Turkish version)
@@ -25,4 +27,5 @@
 │       ├── Lecture_day4_2.pdf
 │       └── Lecture_day5_1.pdf
 └── Agenda/
-└── Course_Agenda.pdf
+    └── Course_Agenda.pdf
+```
