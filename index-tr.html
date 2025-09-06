@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R ile enfeksiyöz hastalık dinamikleri modellemesi kısa kursu - UKHSA/ICL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #6c757d;
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .lang-btn:hover {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #6c757d, #495057);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .course-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            background: rgba(108, 117, 125, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a:hover {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        main {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .module {
+            background: linear-gradient(135deg, rgba(108, 117, 125, 0.1), rgba(73, 80, 87, 0.1));
+            border-left: 4px solid #6c757d;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 10px 10px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .module:hover {
+            transform: translateX(5px);
+        }
+
+        .module h3 {
+            color: #495057;
+            margin-bottom: 1rem;
+        }
+
+        .schedule-item {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            border-left: 3px solid #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-item:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateX(5px);
+        }
+
+        .schedule-item em {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .resource-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.25rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .resource-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+        }
+
+        .announcement {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 138, 101, 0.1));
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .quick-links a {
+            display: block;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(108, 117, 125, 0.1);
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .quick-links a:hover {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        footer {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .course-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .language-switcher {
+                position: relative;
+                top: 0;
+                right: 0;
+                justify-content: center;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="language-switcher">
+                <a href="index.html" class="lang-btn">
+                    🇬🇧 English
+                </a>
+                <a href="#" class="lang-btn active">
+                    🇹🇷 Türkçe
+                </a>
+            </div>
+            <h1>R ile enfeksiyöz hastalık dinamikleri modellemesi kısa kursu</h1>
+            <p>Eğitmen: Juan Vesga (UKHSA/ICL)</p>
+            <div class="course-info">
+                <div class="info-item">
+                    <strong>Program</strong><br>
+                    15-19 Eylül 2025
+                </div>
+                <div class="info-item">
+                    <strong>Konum</strong><br>
+                    Sağlık Bakanlığı (GDPH-MoH), Ankara, Türkiye
+                </div>
+            </div>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showSection('home')">Ana Sayfa</a></li>
+                <li><a href="#" onclick="showSection('syllabus')">Program</a></li>
+                <li><a href="#" onclick="showSection('modules')">Dersler</a></li>
+                <li><a href="#" onclick="showSection('practicals')">Uygulamalar</a></li>
+                <li><a href="#" onclick="showSection('assignments')">Ödevler</a></li>
+                <li><a href="#" onclick="showSection('resources')">Kaynaklar</a></li>
+                <li><a href="#" onclick="showSection('contact')">İletişim</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <main>
+                <section id="home" class="section active">
+                    <h2>Kısa Kursa Hoş Geldiniz</h2>
+                    <p>R kullanarak enfeksiyöz hastalık dinamikleri modellemesi konusunda 5 günlük yoğun atölyemize hoş geldiniz! Bu kurs, hesaplamalı epidemiyolojik modeller ile uygulamalı deneyim sağlayacaktır.</p>
+                    
+                    <div class="announcement">
+                        <h3>📢 Kurs Öncesi Bilgilendirme</h3>
+                        <ul>
+                            <li><strong>Hazırlık:</strong> R betikleri ile Jupyter Notebook'ları kullanacağız - R veya RStudio kurulumu gerekmez! Tüm barındırılan notebook bağlantıları modüller bölümünde sağlanacaktır.</li>
+                            <li><strong>Konum:</strong> Kurs 15-19 Eylül 2025 tarihleri arasında Ankara, Türkiye'de düzenlenecektir.</li>
+                            <li><strong>Materyaller:</strong> Tüm kurs materyalleri ve veri setleri sağlanacaktır. Lütfen Kaynaklar bölümündeki okuma listesini inceleyin.</li>
+                        </ul>
+                    </div>
+
+                    <h3>Kurs Genel Bakış</h3>
+                    <p>Bu kurs, enfeksiyöz hastalıklara uygulanmış matematiksel epidemiyoloji ilkelerine kapsamlı bir giriş sağlamaktadır. Öğrenciler, kompartman iletim modellerinin temel kavramlarını ve R programlama dilinde pratik uygulamaları öğreneceklerdir.</p>
+
+                    <h3>Öğrenme Hedefleri</h3>
+                    <ul>
+                        <li>Enfeksiyöz hastalık modellemesine ve bunların halk sağlığındaki rolüne giriş</li>
+                        <li>ID modellerine uygulanmış olasılık, oranlar, tehlike oranları ve rekabet eden tehlikeler kavramlarını anlama</li>
+                        <li>Hastalık olayları, bulaşma ve müdahaleleri yakalama alternatiflerini gözden geçirme</li>
+                        <li>SIR modellerine, temel üreme sayılarına, sürü bağışıklığına giriş ve bu kavramları gözden geçirmek için simülasyonları keşfetme</li>
+                        <li>Verinin önemini ve salgın ortamlarında bulaşma dinamiklerini simüle etmedeki ilgisini anlama</li>
+                    </ul>
+                </section>
+
+                <section id="syllabus" class="section">
+                    <h2>Kurs Programı</h2>
+                    <p>Temel kavramlardan enfeksiyöz hastalık modellemesinde ileri uygulamalara kadar 5 günlük yoğun atölye programı.</p>
+                    
+                    <div class="module">
+                        <h3>1. Gün: Enfeksiyöz hastalık modellemesine giriş</h3>
+                        <div class="schedule-item">
+                            <strong>09:30 – 10:30</strong><br>
+                            <strong>Ders: Enfeksiyöz hastalık modellemesine giriş</strong><br>
+                            Enfeksiyöz hastalık dinamiklerinin temel kavramlarına ve bulaşmayı simüle etmek için matematiksel sistemlerin kullanımına giriş
+                        </div>
+                        <div class="schedule-item">
+                            <strong>10:30 – 11:00</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>11:00 – 12:30</strong><br>
+                            <strong>Ders: Kompartman modellerinin temel kavramları</strong><br>
+                            Bu oturumda kompartman modeli tasarlama sürecini adım adım takip edeceğiz. Olasılık, oranlar, tehlike oranları ve rekabet eden tehlikeler kavramlarını uygulayacağız. Ayrıca hastalık olayları ve müdahaleleri yakalama alternatiflerini tartışacağız.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>12:30 – 13:45</strong><br>
+                            <em>Öğle Arası</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>13:45 – 15:00</strong><br>
+                            <strong>Uygulama: Basit kompartman modeli gösterimi</strong><br>
+                            Basit bir kompartman modelinin kısa gösterimi.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:00 – 15:30</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:30 – 16:30</strong><br>
+                            <strong>Uygulama: Basit kompartman modeli gösterimi (devamı)</strong><br>
+                            Katılımcılar kendi kohort modellerini kodlayacak. Oran hesaplamaları ve model çıktısının yorumlanması uygulanacak.
+                        </div>
+                    </div>
+
+                    <div class="module">
+                        <h3>2. Gün: SIR modeli</h3>
+                        <div class="schedule-item">
+                            <strong>09:30 – 10:30</strong><br>
+                            <strong>Ders: SIR modeli</strong><br>
+                            SIR modelinin neden enfeksiyöz hastalık dinamiklerinin merkezinde olduğunu anlama. Basitliğinde, SIR modelleri temel üreme sayısı (R₀) ve sürü bağışıklığı gibi daha karmaşık kavramları tanıtmanın kapısıdır.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>10:30 – 11:00</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>11:00 – 12:30</strong><br>
+                            <strong>Ders: SIR modeli ile salgın fazlarını anlama</strong><br>
+                            SIR modelini yöneten matematiksel ifadeleri kapsamak. Uygulamada, bir SIR modelini, model değişkenlerini ve model parametrelerini anlamak için R kullanacağız.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>12:30 – 13:45</strong><br>
+                            <em>Öğle Arası</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>13:45 – 15:00</strong><br>
+                            <strong>Uygulama: SIR'ın yapı taşları</strong><br>
+                            Katılımcılar bir SIR modeli kodlayacak ve ana model parametrelerini bilgilendirmek için bilgi toplayacaklar.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:00 – 15:30</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:30 – 16:30</strong><br>
+                            <strong>Uygulama: Bulaşma dinamiklerinin tanıtımı</strong><br>
+                            Daha önce kodlanan SIR modelini kullanarak R₀, R_eff'in rolünü inceleyerek karmaşıklık ekleyeceğiz ve basit bir SIR modeli için sürü bağışıklığının nasıl kurulabileceğini pratik olarak göreceğiz.
+                        </div>
+                    </div>
+
+                    <div class="module">
+                        <h3>3. Gün: Stokastik modeller ve belirsizliği değerlendirme</h3>
+                        <div class="schedule-item">
+                            <strong>09:30 – 10:30</strong><br>
+                            <strong>Ders: Stokastik modellere giriş 1</strong><br>
+                            Stokastisite kavramlarına ve bunların salgın artışı ve yok olma olasılığını anlamadaki ilgisine giriş.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>10:30 – 11:00</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>11:00 – 12:30</strong><br>
+                            <strong>Ders: Stokastik modellere giriş 2</strong><br>
+                            Stokastik model türleri ve modelleme prosedürlerini kapsamak.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>12:30 – 13:45</strong><br>
+                            <em>Öğle Arası</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>13:45 – 15:00</strong><br>
+                            <strong>Ders: Model belirsizliği ve kalibrasyonunu değerlendirme</strong><br>
+                            Modellemede belirsizliği ve onu değerlendirme yöntemlerini keşfetme.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:00 – 15:30</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:30 – 16:30</strong><br>
+                            <strong>Uygulama: Basit SIR modelinde stokastisiteyi keşfetme</strong><br>
+                            Daha önce kodlanan basit SIR modelini kullanarak stokastik bir süreç tanıtılacak ve çıktısı keşfedilecek.
+                        </div>
+                    </div>
+
+                    <div class="module">
+                        <h3>4. Gün: Salgınlar ve veri</h3>
+                        <div class="schedule-item">
+                            <strong>09:30 – 10:30</strong><br>
+                            <strong>Ders: Salgın analizine giriş</strong><br>
+                            Anahtar gecikmelerin tahminini (örn. kuluçka süresi, seri aralık), büyüme oranları, ikiye katlanma süreleri, temel üreme sayısı ve basit kısa vadeli tahminlemeyi kapsamak.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>10:30 – 11:00</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>11:00 – 12:30</strong><br>
+                            <strong>Ders: Salgın verisi kullanımı</strong><br>
+                            Salgın verisi ve vaka listesi toplama ve kullanma ilkelerini anlama.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>12:30 – 13:45</strong><br>
+                            <em>Öğle Arası</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>13:45 – 15:00</strong><br>
+                            <strong>Uygulama: Salgın verisi</strong><br>
+                            Sentetik salgın verisini yükleme, temizleme ve analiz etme.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:00 – 15:30</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:30 – 16:30</strong><br>
+                            <strong>Uygulama: Salgın tahminleri</strong><br>
+                            Seri aralık ve R₀ tahminleri üretmek için araçlar ve yöntemlerin tanıtımı.
+                        </div>
+                    </div>
+
+                    <div class="module">
+                        <h3>5. Gün: Final ödevi ve kursun bitişi</h3>
+                        <div class="schedule-item">
+                            <strong>09:30 – 10:30</strong><br>
+                            <strong>Uygulama: Final ödevi Bölüm 1</strong><br>
+                            Final projesinin tanıtımı ve uygulamalı çalışma zamanı.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>10:30 – 11:00</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>11:00 – 12:30</strong><br>
+                            <strong>Uygulama: Final ödevi Bölüm 2</strong><br>
+                            Ödevi tamamlama ve grup geri bildirimini hazırlama.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>12:30 – 13:45</strong><br>
+                            <em>Öğle Arası</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>13:45 – 15:00</strong><br>
+                            <strong>Grup etkinliği</strong><br>
+                            Gruplar final ödevi hakkında geri bildirimde bulunur.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:00 – 15:30</strong><br>
+                            <em>Ara</em>
+                        </div>
+                        <div class="schedule-item">
+                            <strong>15:30 – 16:15</strong><br>
+                            <strong>Final dersi: COVID-19'u nasıl modelledik?</strong><br>
+                            COVID-19 hakkında bildiklerimizin kanıtlarını gözden geçirme ve bunu matematiksel bir modele nasıl çevireceğimizi inceleme.
+                        </div>
+                        <div class="schedule-item">
+                            <strong>16:15 – 16:30</strong><br>
+                            <strong>Kapanış</strong>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="modules" class="section">
+                    <h2>Kurs Dersleri</h2>
+                    <p>Atölyenin her günü için ders slaytlarına erişim. Tüm slaytlar kurs deposundan indirilebilir olacaktır.</p>
+                    
+                    <div class="module">
+                        <h3>1. Gün: Enfeksiyöz hastalık modellemesine giriş</h3>
+                        <p>Enfeksiyöz hastalık dinamikleri ve kompartman modellerinin temel kavramları.</p>
+                        <div>
+                            <a href="./Lectures/TR/Lecture_day1_1.pdf" class="resource-link">📄 Ders Slaytları 1</a>
+                            <a href="./Lectures/TR/Lecture_day1_2.pdf" class="resource-link">📄 Ders Slaytları 2</a>
+                        </div>
+                    </div>
+
+                    <div class="module">
+                        <h3>2. Gün: SIR modeli</h3>
+                        <p>Temel SIR model kavramları, matematiksel ifadeler ve bulaşma dinamikleri.</p>
+                        <div>
+                            <a href="./Lectures/TR/Lecture_day2_1.pdf" class="resource-link">📄 Ders Slaytları 1</a>
+                            <a href="./Lectures/TR/Lecture_day2_2.pdf" class="resource-link">📄 Ders Slaytları 2</a>
+                        </div>
+                    </div>
+
+                    <div class="module">
+                        <h3>3. Gün: Stokastik modeller ve belirsizliği değerlendirme</h3>
+                        <p>Stokastisite, model belirsizliği ve kalibrasyon yöntemlerine giriş.</p>
+                        <div>
+                            <a href="./Lectures/TR/Lecture_day3_1.pdf" class="resource-link">📄 Ders Slaytları 1</a>
+                            <a href="./Lectures/TR/Lecture_day3_2.pdf" class="resource-link">📄 Ders Slaytları 2</a>
+                        </div>
+                    </div>
+
+                    <div class="module">
+                        <h3>4. Gün: Salgınlar ve veri</h3>
+                        <p>Salgın analizi, anahtar epidemiyolojik parametreler ve gerçek dünya veri uygulamaları.</p>
+                        <div>
+                            <a href="./Lectures/TR/Lecture_day4_1.pdf" class="resource-link">📄 Ders Slaytları 1</a>
+                            <a href="./Lectures/TR/Lecture_day4_2.pdf" class="resource-link">📄 Ders Slaytları 2</a>
+                        </div>
+                    </div>
+
+                    <div class="module">
+                        <h3>5. Gün: Final ödevi ve kursun bitişi</h3>
+                        <p>COVID-19 modelleme vaka çalışması ve kurs entegrasyonu.</p>
+                        <div>
+                            <a href="./Lectures/TR/Lecture_day5_1.pdf" class="resource-link">📄 Ders Slaytları 1</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="practicals" class="section">
+                    <h2>Etkileşimli Uygulamalar</h2>
+                    <p>Uygulamalı pratik oturumlar için etkileşimli Jupyter Notebook'larına erişim. Tüm notebook'lar günlük olarak yüklenecek ve herhangi bir yazılım kurulumu olmadan doğrudan tarayıcınızda çalıştırılabilir.</p>
+                    
+                    <div class="module">
+                        <h3>🚀 Etkileşimli Notebook'ları Başlat</h3>
+                        <p>Binder tarafından desteklenen etkileşimli Jupyter ortamında tüm pratik oturumlara erişmek için aşağıdaki rozeti tıklayın. Ortamda R ve tüm gerekli paketler önceden yüklenmiştir.</p>
+                        
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <a href="https://mybinder.org/v2/gh/YOUR-USERNAME/YOUR-REPO-NAME/HEAD" target="_blank">
+                                <img src="https://mybinder.org/badge_logo.svg" alt="Binder'ı Başlat" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            </a>
+                        </div>
+                        
+                        <div class="announcement">
+                            <h4>📝 Pratik Oturumlar Şunları İçerir:</h4>
+                            <ul>
+                                <li><strong>1. Gün:</strong> İlk kompartman modelinizi oluşturma</li>
+                                <li><strong>2. Gün:</strong> SIR modellerini kodlama ve keşfetme</li>
+                                <li><strong>3. Gün:</strong> Stokastik süreçleri uygulama</li>
+                                <li><strong>4. Gün:</strong> Gerçek salgın verilerini analiz etme</li>
+                                <li><strong>5. Gün:</strong> Final projesi ve COVID-19 vaka çalışması</li>
+                            </ul>
+                        </div>
+                        
+                        <p><strong>Not:</strong> Notebook'lar kurs süresince günlük olarak güncellenir. Etkileşimli ortama erişimde herhangi bir sorun yaşarsanız, lütfen eğitmenle iletişime geçin.</p>
+                    </div>
+                </section>
+
+                <section id="assignments" class="section">
+                    <h2>Final Ödevi</h2>
+                    <p>Final ödevi, kurs boyunca edindiğiniz tüm becerileri derlemek ve uygulamak üzere tasarlanmıştır.</p>
+                    
+                    <div class="module">
+                        <h3>📊 Kapsamlı Proje: Enfeksiyöz Hastalık Modellemesi</h3>
+                        <p>Bu kapsamlı ödev, temel kompartman modellerinden ileri stokastik yaklaşımlara ve gerçek dünya veri analizine kadar enfeksiyöz hastalık modelleme kavramlarını anlayışınızı göstermenize olanak tanıyacaktır.</p>
+                        
+                        <div class="announcement">
+                            <h4>📝 Ödev Detayları:</h4>
+                            <ul>
+                                <li><strong>Format:</strong> Grup etkinliği (grup başına 3-4 katılımcı)</li>
+                                <li><strong>Süre:</strong> 4. Gün (tanıtım) - 5. Gün (çalışma ve sunum)</li>
+                                <li><strong>5. Gün Etkinlikleri:</strong> Uygulamalı çalışma zamanı ve ardından grup sunumları</li>
+                                <li><strong>Araçlar:</strong> Etkileşimli Jupyter Notebook ortamı</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <strong>📅 Zaman Çizelgesi:</strong><br>
+                            <strong>4. Gün:</strong> Ödev tanıtımı ve grup oluşturma<br>
+                            <strong>5. Gün:</strong> Uygulamalı çalışma zamanı ve grup sunumları
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem;">
+                            <h4>🔗 Ödev Materyalleri:</h4>
+                            <p>Tam ödev talimatları ve veri setleri ile özel bir Jupyter notebook kursun <strong>4. günü</strong> yüklenecektir.</p>
+                            
+                            <div style="text-align: center; margin: 1rem 0;">
+                                <a href="#" class="resource-link" style="opacity: 0.6; cursor: not-allowed;">
+                                    📓 Final Ödev Notebook'u (4. Gün Mevcut Olacak)
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <p><strong>Not:</strong> Bu ödev tüm kurs bileşenlerini entegre eder - kompartman modelleme, SIR dinamikleri, stokastik süreçler ve salgın veri analizi. Gruplar bulgularını ve modelleme yaklaşımlarını son gün sınıfa sunacaklardır.</p>
+                    </div>
+                </section>
+
+                <section id="resources" class="section">
+                    <h2>Kurs Kaynakları</h2>
+                    <p>Enfeksiyöz hastalık modellemesinde öğreniminizi desteklemek için temel okuma materyalleri, çevrimiçi kaynaklar ve araçlar.</p>
+                    
+                    <h3>Bilimsel Literatür</h3>
+                    <ul>
+                        <li><a href="https://www.nature.com/articles/nrmicro1845" target="_blank" class="resource-link">📄 Grassly NC ve ark. ID matematiksel modellerine dair derleme</a></li>
+                        <li><a href="https://pubmed.ncbi.nlm.nih.gov/21481448/" target="_blank" class="resource-link">📄 Garnett ve ark. Sağlık programlarının değerlendirilmesinde matematiksel modeller</a></li>
+                        <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7150075/" target="_blank" class="resource-link">📄 White ve ark. Enfeksiyöz Hastalık Epidemiyolojisinde Matematiksel Modeller</a></li>
+                        <li><a href="https://www.nature.com/articles/s41592-020-0856-2" target="_blank" class="resource-link">📄 Bjornstad ve ark. ID modellemesi için SEIRS</a></li>
+                        <li><a href="https://academic.oup.com/cid/article/73/1/e215/5932264" target="_blank" class="resource-link">📄 O'Driscoll ve ark. 2021.CID. R tahmin yöntemleri</a></li>
+                        <li><a href="https://www.pnas.org/doi/10.1073/pnas.0307506101" target="_blank" class="resource-link">📄 Fraser ve ark. 2004. PNAS. Salgın kontrolü</a></li>
+                    </ul>
+
+                    <h3>Çevrimiçi Kaynaklar</h3>
+                    <ul>
+                        <li><a href="http://epirecip.es/epicookbook/" target="_blank" class="resource-link">🍳 Epirecipes: Farklı programlama dillerinde ID modelleme örnekleri</a></li>
+                        <li><a href="http://www.modelinginfectiousdiseases.org/" target="_blank" class="resource-link">📚 Keeling & Rohani ID Modelleme kitabı</a></li>
+                    </ul>
+
+                    <h3>Çevrimiçi Kitaplar</h3>
+                    <ul>
+                        <li><a href="https://bookdown.org/aschmi11/RESMHandbook/" target="_blank" class="resource-link">📖 R yazılım El Kitabı</a></li>
+                        <li><a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf" target="_blank" class="resource-link">📖 R'a giriş</a></li>
+                    </ul>
+
+                    <h3>Yazılım ve Araçlar</h3>
+                    <p>Tüm pratik oturumlar R çekirdekleri ile Jupyter Notebook'ları kullanacak, Binder üzerinden erişilebilir. Yazılım kurulumu gerekmez - her şey tarayıcınızda çalışır!</p>
+                </section>
+
+                <section id="contact" class="section">
+                    <h2>İletişim Bilgileri</h2>
+                    
+                    <h3>Eğitmen</h3>
+                    <p><strong>İsim:</strong> Juan Vesga<br>
+                    <strong>Kurum:</strong> UK Sağlık Güvenlik Ajansı'nda Baş Aşı Modelleyicisi ve Imperial College London'da misafir araştırmacı<br>
+                    <strong>E-posta:</strong> juan.vesga@ukhsa.gov.uk; j.vesga10@ic.ac.uk<br>
+                    <strong>Profil:</strong> <a href="https://profiles.imperial.ac.uk/j.vesga10" target="_blank" class="resource-link">Imperial College London Profili</a></p>
+
+                    <h3>Kurs İletişimi</h3>
+                    <p>Birincil iletişim e-posta ve kurs duyuruları aracılığıyla olacaktır.</p>
+
+                    <h3>Kurs Detayları</h3>
+                    <p><strong>Tarihler:</strong> 15-19 Eylül 2025<br>
+                    <strong>Konum:</strong> Sağlık Bakanlığı (GDPH-MoH), Ankara, Türkiye<br>
+                    <strong>Süre:</strong> 5 günlük yoğun atölye</p>
+                </section>
+            </main>
+
+            <aside class="sidebar">
+                <h3>Hızlı Bağlantılar</h3>
+                <div class="quick-links">
+                    <a href="mailto:j.vesga10@imperial.ac.uk?subject=Enfeksiyöz Hastalık Modelleme Kursu - Soru">📧 Eğitmene E-posta</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdFiJ5aNAhuntxj9zGolBcCIZTiXQmPzMwFkwPtQgmi8mPBYQ/viewform?vc=0&c=0&w=1&flr=0&usp=mail_form_link" target="_blank">📝 Geri Bildirim Formu</a>
+                    <a href="./Agenda/Course_Agenda.pdf" target="_blank">📄 Yazdırılabilir Program (PDF)</a>
+                </div>
+            </aside>
+        </div>
+
+        <footer>
+            <p>Türkiye'deki Sağlık Güvenlik Projesi (HSP) için Juan F Vesga tarafından oluşturulmuştur, Sağlık Bakanlığı (GDPH-MoH). Avrupa Birliği tarafından finanse edilmekte ve ülkede Dünya Sağlık Örgütü (WHO) tarafından uygulanmaktadır.</p>
+            <p>Bu kurs web sitesi GitHub Pages'ta barındırılmaktadır</p>
+        </footer>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.style.background = '';
+                link.style.color = '';
+            });
+            
+            event.target.style.background = 'linear-gradient(135deg, #6c757d, #495057)';
+            event.target.style.color = 'white';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const modules = document.querySelectorAll('.module');
+            modules.forEach(module => {
+                module.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(10px) scale(1.02)';
+                });
+                
+                module.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0) scale(1)';
+                });
+            });
+
+            const resourceLinks = document.querySelectorAll('.resource-link');
+            resourceLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
