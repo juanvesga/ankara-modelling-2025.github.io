@@ -1667,7 +1667,7 @@ install.packages(socialmixr)
 library(socialmixr)
 
 # Load Epidemic data 
-data&lt;-read.csv(here(&quot;data&quot;,&quot;WRITE-HERE-THE-NAME-OF-YOUR-FILE.csv&quot;))
+data&lt;-read.csv(here(&quot;data&quot;,&quot;daily_GE_data.csv&quot;))
 
 # create an X axis for plotting (Barplots need a categorical axis)
 data$t&lt;-as.factor(data$Days)
